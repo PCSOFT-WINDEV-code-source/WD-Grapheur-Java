@@ -1,0 +1,323 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : cCourbe
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x11bf054900d1f68d
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  type_code : 10
+  p_codes :
+   -
+     internal_properties : CAAAAAgAAABGJ4BiKnFxm2Z5n0M14QdPPjB8EzJwCW4sjtprzZm/RNAQI3FqKs8xpFWxuhcLn95m0KKqocT1DpAQuX2EdVxIZGSh71lPbayCh0Wge4A0SIylo1vy5UUF6jd4ZONK3nekvLqaAalzwY3Me+6LdqWKvX+w9qsQ/N/275QktdI=
+     code : |1+
+      // ATTENTION ----------------------------
+      // Cette classe gère les courbes et les nuages de points
+      // ATTENTION ----------------------------
+      cCourbe est une classe
+      	hérite de CGraphe
+      
+      	m_bNuage est un booléen = faux
+      	
+      	m_bReliePoint est un booléen = vrai
+      	m_nTaillePoint est un entier = 1
+      
+      Fin
+      
+     type : 131072
+  procedures :
+   -
+     name : Constructeur
+     procedure_id : 1278746630301087373
+     type_code : 27
+     code : |1+
+      // Syntaxe :
+      //cCourbe ([<bNuage>])
+      //
+      // Paramètres :
+      // 	bNuage : est ce qu'on dessine un nuage de points ?
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure Constructeur(bNuage = faux)
+      
+      :m_bNuage = bNuage
+      
+     type : 589824
+   -
+     name : Destructeur
+     internal_properties : CAAAAAgAAABX7NNwpf4fpJN2VZx8URbd0HnSUxb8z1KOl1gOg9hOcYXSs+Fsd81DWRQi7JvKiSJri16yeIZ5OS4YsGA56yruYumWSKwxRYvKj+B5n8X+fhBrOKTLVgd63MWLV0DMXwJG1ekCRPzu3o21
+     procedure_id : 1278746630301152909
+     type_code : 28
+     code : |1+
+      // Syntaxe :
+      //Classe1 ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      Procédure Destructeur()
+      
+     type : 655360
+   -
+     name : TaillePoint
+     procedure_id : 1278747201531870460
+     type_code : 12
+     code : |1-
+      // Syntaxe :
+      //TaillePoint (<nTaillePoint>)
+      //
+      // Paramètres :
+      // 	nTaillePoint : Taille de chaque point du nuage de points en pixel
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure virtuelle TaillePoint(nTaillePoint)
+      
+      
+      :m_nTaillePoint = nTaillePoint/2
+     type : 458752
+   -
+     name : ReliePoint
+     procedure_id : 1278747635323603132
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //ReliePoint (<bRelié>)
+      //
+      // Paramètres :
+      //	bRelié : Est ce qu'il faut relier les points du nuage de points ?
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure virtuelle ReliePoint(bRelié)
+      
+      :m_bReliePoint = bRelié
+     type : 458752
+   -
+     name : Dessine
+     procedure_id : 1278747935971383712
+     type_code : 12
+     code : |1-
+      // Syntaxe :
+      //Dessine ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure Virtuelle Dessine()
+      
+      
+      i est un entier
+      MargeTitreHaut est un entier
+      MargeTitreBas est un entier
+      MargeLégendeGauche est un entier
+      MargeLégendeDroite est un entier
+      nNbPoints est un entier = 0
+      
+      // Récupération de la valeur max
+      nValeurMax est un entier 
+      nValeurMin est un entier 
+      nSérie est un entier
+      
+      nX, nY sont des entiers
+      rRatioVertical est un reel			// Nombre de pixels par unité de valeur
+      rEcartHorizontal est un entier		// Nombre de pixel horizontaux entre chaque valeur
+      
+      
+      pour nSérie = 1 _a_ dimension(:m_tabSérie)
+      	nValeurMax = max(nValeurMax,:GetValeurMax(nSérie))	
+      FIN
+      
+      pour nSérie = 1 _a_ dimension(:m_tabSérie)
+      	nValeurMin = min(nValeurMin,:GetValeurMin(nSérie))	
+      FIN
+      
+      
+      // Calcul des marges ( ATTENTION : les variables sont passées par adresse et modifiées dans la procédure appelées)
+      :CalculMarges(MargeTitreBas,MargeTitreHaut, MargeLégendeGauche, MargeLégendeDroite)
+      
+      // ----------------------------------------
+      // Calcul des variables de travail
+      // ----------------------------------------
+      
+      
+      // Récupération du max de points
+      pour nSérie = 1 _a_ dimension(:m_tabSérie)
+      	nNbPoints = max(nNbPoints,dimension(:m_tabSérie[nSérie]:ptabDonnées))
+      FIN
+      
+      
+      // Calcul du ratio vertical
+      rRatioVertical = ({:m_sNomChampImage,indchamp}..Hauteur - 2 * ::MARGE_AXE_y-(MargeTitreBas + MargeTitreHaut)) / (nValeurMax - nValeurMin)
+      
+      // Calcul du nombre de pixel entre chaque valeur
+      rEcartHorizontal = ({:m_sNomChampImage,indchamp}..largeur - 2 * ::MARGE_AXE_x - MargeLégendeDroite - MargeLégendeGauche) / nNbPoints
+      
+      
+      // Démarre le dessin
+      dDébutDessin(:m_sNomChampImage)
+      
+      // Tracé des axes
+      :TraceAxe(MargeTitreHaut,MargeLégendeGauche,{:m_sNomChampImage,indchamp}..Hauteur - ::MARGE_AXE_y - MargeTitreBas + (nValeurMin * rRatioVertical) , MargeTitreBas,MargeLégendeDroite)
+      
+      // Tracé des graduations
+      :TraceGraduation(nValeurMin,nValeurMax,rRatioVertical,MargeTitreBas, MargeLégendeGauche)
+      
+      // Trace le titre
+      :DessineTitre()
+      
+      // ---------------------------------
+      // Dessin de la courbe
+      // ---------------------------------
+      
+      
+      nCouleur est un entier
+      
+      // Parcours des séries
+      pour nSérie = 1 _a_ dimension(:m_tabSérie)
+      	
+      	// Dessine la légende
+      	:DessineLégende(MargeTitreHaut,MargeTitreBas, MargeLégendeGauche, MargeLégendeDroite,nSérie,Dimension(:m_tabSérie))
+      	
+      	nCouleur = :DonneCouleur(nSérie)
+      	
+      	// Commence le tracé sur l'axe
+      	nX = ::MARGE_AXE_X + MargeLégendeGauche
+      	nY = {:m_sNomChampImage,indchamp}..Hauteur - ::MARGE_AXE_y - MargeTitreBas + (nValeurMin * rRatioVertical) - :m_tabSérie[nSérie]:ptabDonnées[1] * rRatioVertical
+      	
+      	
+      	// Création du point de départ dans la couleur donnée
+      	dpoint(nX,nY,nCouleur)
+      	
+      	// Récupération de la couleur 
+      	// Le système s'occupe de la conversion dans un sens (Affichage)
+      	si nSérie <= dimension(:m_tabCouleur) ALORS
+      		:m_tabCouleur[nSérie] = dPixelCouleur({:m_sNomChampImage,indchamp},nX,nY)
+      	sinon
+      		:m_tabCouleur[dimension(:m_tabCouleur)] = dPixelCouleur({:m_sNomChampImage,indChamp},nX,nY)	
+      		
+      	FIN
+      	// Redessine le point en noir pour ne pas que cela se voit sur l'axe
+      	dpoint(nX,nY,noir)
+      	
+      	
+      	// ----------------------------------
+      	// Dessine les lignes
+      	// ----------------------------------
+      	
+      	pour i = 2 a nNbPoints
+      		
+      		Si :m_bNuage ALORS
+      			
+      			// C'est un nuage de point
+      			si :m_bReliePoint
+      			// Dessine la ligne entre le point précédent et le nouveau point
+      			dligne(nX,nY,nX + rEcartHorizontal,{:m_sNomChampImage,indChamp}..Hauteur - ::MARGE_AXE_y - MargeTitreBas + (nValeurMin * rRatioVertical) - :m_tabSérie[nSérie]:ptabDonnées[i] * rRatioVertical,nCouleur)
+      		fin
+      		
+      		dcercle(nX-:m_nTaillePoint,nY-:m_nTaillePoint,nX+:m_nTaillePoint,nY+:m_nTaillePoint,nCouleur,nCouleur)	
+      	sinon
+      		// C'est une courbe
+      		// Dessine la ligne entre le point précédent et le nouveau point	
+      		dligne(nX,nY,nX + rEcartHorizontal,{:m_sNomChampImage,indchamp}..Hauteur - ::MARGE_AXE_y - MargeTitreBas + (nValeurMin * rRatioVertical) - :m_tabSérie[nSérie]:ptabDonnées[i] * rRatioVertical,nCouleur)
+      		
+      		
+      	FIN
+      	
+      	
+      	// Mise à jour des coordonnées
+      	nX += rEcartHorizontal
+      	
+      	nY = {:m_sNomChampImage,indChamp}..Hauteur - ::MARGE_AXE_y - MargeTitreBas + (nValeurMin * rRatioVertical) - :m_tabSérie[nSérie]:ptabDonnées[i] * rRatioVertical
+      	
+      	
+      FIN
+      fin
+     type : 458752
+   -
+     name : ClicGraphe
+     internal_properties : CAAAAAgAAAAKHNq33e5GLuhzNHZqnMazchhPsFFbcQo76N61MZ04XNKF8z6Yx6/x2b3npg/GRBYD/HrZ1cbB7QzowzyTAKgauUmnqX5DoOd/PhNf617SVLRkE8W2tT+PsnOsldYxOqRzh89TgRqbkzg/GLiFg39PuUoP7AMcspjm77wVdr8whGpDCpSafXCKdNXZZTnmZLwqE8Kbqw==
+     procedure_id : 1278752638971563393
+     type_code : 12
+     code : |1-
+      // Syntaxe :
+      //ClicGraphe ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure Virtuelle ClicGraphe()
+      
+      // Démarre le dessin sur le champ image
+      // Au cas ou un autre graphe ait été créé le DC en cours ne serait plus bon, il faut donc repositionner le dessin sur le bon champ
+      ddebutdessin(:m_sNomChampImage,dSansEffacer)
+      
+      
+      nX, nY sont des entiers
+      
+      // Récupération de la position de la souris
+      nX = sourisposx() 
+      nY = SourisPosY()
+      
+      si :m_nPositionLegende = grsans alors retour
+      
+      nIndiceSérie est un entier
+      i est un entier
+      j est un entier
+      bTrouvé est un booléen
+      bTrouvé = faux
+      
+      pour i = -2 a 2
+      	pour j = -2 a 2
+      		pour nIndiceSérie  = 1 _a_ dimension(:m_tabSérie)	
+      			// On compare la couleur du dessin avec celle des séries
+      			si dpixelcouleur(:m_snomchampimage,nX+i,nY+j) = :m_tabCouleur[nIndiceSérie] ALORS
+      				// On a trouvé la série correspondante, on sort		
+      				bTrouvé = vrai
+      				sortir				
+      			FIN	
+      		FIN
+      		si bTrouvé ALORS
+      			sortir
+      		FIN
+      	FIN
+      	si bTrouvé ALORS
+      		sortir
+      	FIN
+      FIN
+      
+      si bTrouvé alors
+      	
+      	// Dessine le rectangle de couleur
+      	dfond(Blanc)
+      	
+      	drectangle(:m_nAbscisseLégende,:m_nOrdonnéeLégende,{:m_sNomChampImage,indChamp}..Largeur -::MARGE_AXE_Y,:m_nOrdonnéeLégende + 20,Blanc,noir)
+      	
+      	drectangle(:m_nAbscisseLégende + 3,:m_nOrdonnéeLégende+3,:m_nAbscisseLégende + 18,:m_nOrdonnéeLégende+18,:m_tabCouleur[nIndiceSérie],Blanc)
+      	
+      	dpolice("Arial",10,iGras)
+      	
+      	dtexte(:m_nAbscisseLégende + 25,:m_nOrdonnéeLégende + 3,:m_tabLégende[nIndiceSérie],noir)
+      fin
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+resources :
+ string_res :
+  identifier : 0x1fbf67240046f1cd
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

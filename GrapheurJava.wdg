@@ -1,0 +1,795 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : GrapheurJava
+ major_version : 28
+ minor_version : 0
+ type : 7
+ description : ""
+ subtype : 0
+procedure_set :
+ identifier : 0x175415bf03d700f0
+ internal_properties : CAAAAAgAAABGLu41kG7fjQV3iS4F72qmnKaNh5694reolNKIW0iw
+ code_elements :
+  internal_properties : CAAAAAgAAABPOo5wfzL5PtlmH9g6pVlcqG1md+uM4GM8B/k/aVja5R6ZseBzxTGWZbo12UeE8bWym5Rl91AKrNq9wTYnFyamg2lAMw==
+  type_code : 31
+  p_codes :
+   -
+     internal_properties : CAAAAAgAAADwI6Z9ew42drO3AuUlb4fenZ8BS8o88tFmkipSQFTsZpTUxFS75ma2aAta9EbSF3v0PlGL8oq/9yUmDzCpy5p7veOUgTbdVo54UV/olsGo0AR+8LYKUR6M4zu7ueHNAQwjj2WugHJFXsQw8BDouOHlFbcKnz3csDbWNI9ZOutmSMBR4YDoer0LarFJVIH9xr/7CaxVCVqCTCi0a255ZczSJLvG395UQzUKb/PJZi9GlNrKV+QBluUGW0rCiZ4JW+ml4UEVyyZmhZS4ybLMlcX93c1J2B5BdCzifZYyCVVArUPPCO5ugCaJJkgVR0PzdUdph15pprudF6CvMpGYFQOqa0DyXh0sVgmgI+2naKyIzqxPVPdmWufPEM9lX5UqVzaMQ1px5GtBHyxVB8wnLGaBn2OcOLTJ4XIKuIiPzl1T5JF4BQ+ptFnXdgeJcwVwf99LFYBmd6EYz7KGjCe5BzIfHRNE0O4DMeUaADSA1IsZTcH3Y2EsYuLr9MYq+1gmRes/xMPrAflaNTPE/fcWj68b4RawPl6axwGc9aI8L3HzQJuVbzbevGLjcoUwEE7jcTdSu4E4tOYLqfqoRDOQK2/VlG/SYRA0BLVDaJLCBZgS5gzyJu7lOJO//9lRu6ZKb/s2IS8+lC+imydlGgf8jqyzy/7iyEn48HQmwpEGZ9KfQ3/MfLPtHpl152Rn7qKK64nREm9Dtw==
+     code : |1-
+      CONSTANT
+      	
+      	// Constantes représentant le type de graphe à créer
+      	// Ces constantes ont les mêmes valeurs que les constantes du WLangage
+      	grHisto = 1
+      	grCourbe = 2
+      	grNuage = 5
+      		
+      	// Ces constantes concernent la position du titre et de la légende
+      	grSans = 0
+      	grEnBas = 4
+      	grEnHaut = 3
+      	grAGauche = 2
+      	grADroite = 1
+      FIN
+      
+      
+      // Cette structure permet de gérer plusieurs graphes en même temps
+      STTypeGraphe est une structure
+      	sNomGraphe est une chaine			// Nom du graphe
+      	pclGraphe est un Objet dynamique		// L'objet Correspondant (CHistoGramme,cCourbe,cNuage)	
+      FIN
+      
+      gtabListeGraphe est un tableau dynamique de STTypeGraphe		// Tableau contenant les différents graphes créés
+      
+      
+      prive
+      	gsErreur est une chaine
+      	
+     type : 720896
+   -
+     code : |1-
+      
+      // Libération des graphes
+      i est un entier
+      
+      pour i = 1 _a_ dimension(gtabListeGraphe)
+      	
+      	// Vérification de l'objet (Voir s'il n'est pas null)
+      	si gtabListeGraphe[i]:pclGraphe <> NULL
+      		
+      		// L'objet n'est pas null
+      		// Libération de l'objet Graphe
+      		liberer gtabListeGraphe[i]:pclGraphe
+      		
+      	fin
+      FIN
+      
+      // Suppression de tous les graphes
+      Tableausupprimetout(gtabListeGraphe)
+     type : 720898
+  procedures :
+   -
+     name : grCrée
+     internal_properties : CAAAAAgAAAADHJRKSvW3+WRy4APcuyGqoQ4F3vHl6Mp/J7HA95MW3j4iy4ahEKW8zbaD/wtj0rYfFyuqDFj8p6+9BkJrvdfdfCXjRyl8oLVDCIiMFQqpdyxI7HGmRCn5A/aCREGK9bto3twVq0tbfFSRQxFaz8kQPOkSSisim7ULDNUiAccQfRTQgow3edGy9cfIa5pG94IodcoOFHGH4kHxLMZUmKM2cmfS6ltRJq+Inf0XzMOp/x83a0Zf/Bzejg3ym0V1ZApMyDmeeh1JUK6NAj5UJW1LgVSflwWVkg70UytyFnwEVa8JHaIAQPubjDpoNzM9Bvr0tldgw0+wJVWTv8dZ7bktrHbKxTOfEGdgxBIJP7RcnlwdVOytwnPSzjMDxs2jt905CNuW4Gt2luO2nWB9Yw5agu2hBtdEfFyUzm9CrMCTUB4lWGmDWOsoK1w+0D7qZSE7ismVnv8RksH4LyabqtgwpG3o3iPbxbQmForTyYeMNNOFgnCE
+     procedure_id : 1680992471063462128
+     type_code : 15
+     code : |1+
+      // Syntaxe :
+      //[ <Résultat> = ] grCrée (<sNomGraphe>, <nType>)
+      //
+      // Paramètres :
+      //	sNomGraphe : Le nom du graphe que l'on veut créer
+      //	nType : Le type de graphe (grHisto,grCourbe,grNuage)
+      // Valeur de retour :
+      // 	booléen :    Vrai si la fonction a réussi, faux dans le cas contraire
+      
+      Procédure grCrée(sNomGraphe,nType)
+      
+      
+      // Variables locales
+      nIndice est un entier		// Indice du graphe dans le tableau
+      nAjout est un entier		// Indice auquel le graphe a été ajouté
+      
+      
+      //
+      // Voir la documentation de la fonction grCrée
+      //
+      
+      
+      //--------------------------------------------
+      // Vérification des paramètres
+      //--------------------------------------------
+      
+      	// Vérification du nom du graphe
+      
+      	si sNomGraphe ~= "" ALORS
+      		gsErreur = <§@41b859715e99ef780000§>
+      		renvoyer faux
+      	FIN
+      	
+      	
+      	// Vérification du type du graphe
+      	// Le type de graphe ne doit être que d'un des types géré
+      	// Dans tous les autres cas, on renvoie faux	
+      	selon nType
+      		cas grhisto,grcourbe,grnuage
+      			// Le paramètre est bon		
+      			// On continue
+      		autres cas
+      		
+      			gsErreur = <§@41b859715e99ef780001§> + rc + <§@41b859715e99ef780002§>
+      			renvoyer faux
+      	FIN
+      
+      
+      //--------------------------------------------
+      // Recherche du Graphe dans le tableau
+      //--------------------------------------------
+      nIndice = RechercheGraphe(sNomGraphe)
+      si nIndice <> -1 ALORS
+      	gsErreur = <§@41b859715e99ef780003§>
+      	grSupprimeTout(sNomGraphe)
+      	
+      FIN
+      
+      // Ajout d'un élément dans le tableau
+      // et récupération de son indice
+      nAjout = Tableauajoute(gtabListeGraphe)
+       
+      // Mise à jour des informations de ce graphe
+      gtabListeGraphe[nAjout]:sNomGraphe = sNomGraphe
+      
+      // Selon le type de graphe désiré, on alloue le bon objet
+      Selon nType
+      	cas grhisto
+      		gtabListeGraphe[nAjout]:pclGraphe = allouer un cHistogramme()
+      	cas grcourbe
+      		gtabListeGraphe[nAjout]:pclGraphe = allouer un cCourbe()
+      	cas grNuage	
+      		// On alloue le cCourbe en passant vrai pour faire un nuage
+      		gtabListeGraphe[nAjout]:pclGraphe = allouer un CCourbe(Vrai)	
+      FIN
+      
+      
+      renvoyer vrai
+     type : 458752
+   -
+     name : GetErreur
+     procedure_id : 1680992471063527664
+     type_code : 15
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] GetErreur ()
+      //
+      // Cette fonction renvoie le libellé de la dernière erreur
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	chaîne : Le libellé de la dernière erreur
+      
+      Procédure GetErreur()
+      
+      renvoyer gsErreur
+     type : 458752
+   -
+     name : grAjouteDonnée
+     internal_properties : CAAAAAgAAABJnvFRxVsYnPB/zbVVptf14lvrZc485PJ8yGjuSXMmnBELbkxzUpi8VT27uRdHfwEAi2xJHoZl3Zom4R4lhu15UF7FoePHimNJGylThLW9qv2RbVKWe2AxQ9zKgM6g1Kn/N5ZJM7kFsljXLBnW8PSJ6cKP05xFbWl3A1W9QzdXXgccJEAtVmjb6GIhLxXyY2dVtP8oUXziUCiW7C+mWlb2zw9a+pTbkSAZK53Snpcmp80UHf33U8llR/a51gBYRus0jzUj4KuK8HqKghE8RpI8yFQnzisTsQBTBIUsrHUZnLYyozA7qDzPWFA2X5vejK0E+K63oQpPGDAa44MhASflBp5iRk39zvcCM2SZ+LTwpe/lMkQ5zEzfz/kjLbZX+I/evT14cTpy68E=
+     procedure_id : 1680992471063593200
+     type_code : 15
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] grAjouteDonnée (<sNomGraphe>, <nSérie>, <nValeur> [, <nIndice>])
+      //
+      // Permet d'ajouter une donnée à un graphe
+      // Paramètres :
+      //	sNomGraphe : Nom du graphe pour lequel la donnée doit être ajoutée
+      //	nSérie : Numéro de la série pour laquelle la donnée doit être ajoutée
+      //	nValeur : La valeur à ajouter
+      //	nIndice (valeur par défaut=-1) : L'indice auquel on doit ajouter la valeur
+      // Valeur de retour :
+      // 	booléen :  Vrai si la fonction a réussi, faux dans le cas contraire
+      
+      Procédure grAjouteDonnée(sNomGraphe,nSérie,nValeur,nIndice = -1)
+      
+      nIndiceGraphe est un entier
+      
+      
+      nIndiceGraphe = RechercheGraphe(sNomGraphe)
+      si nIndiceGraphe = -1 ALORS
+      	renvoyer faux
+      FIN
+      
+      // Vérification du pointeur
+      si gtabListeGraphe[nIndiceGraphe]:pclGraphe = null ALORS
+      	gsErreur = <§@41b859715e99ef780004§>
+      	renvoyer faux
+      FIN
+      
+      // On ajoute la donnée => Appel de la méthode correspondante
+      gtabListeGraphe[nIndiceGraphe]:pclGraphe:AjouteDonnées(nValeur,nIndice,nSérie)
+      
+      
+      renvoyer vrai
+     type : 458752
+   -
+     name : grDestinationChamp
+     internal_properties : CAAAAAgAAACtnD5yFLO+mdaXF8XZ+pmpPD+ZhLac2OXGZE1ok5PwJF0OyiBIOC72w9BZbbJFfm5TEromk9nAxy0HL3ViTazTVFfrZzVQVhnUYS2YnAM1Yy4Qn7Wyzu57fJWDz9lU6HQoN5IQed9Z6+WDOhJfx9TevMl1bgec5tcigt/WLARKbzPPXNlHJqAXOlD4wQ7DyasgaS6/GiLV3h9Ve549MaxA4M6Bcoo1+PLQKEuzCBCAxyTmlkd/xuuEcY7cR/ATYzlIZHpyLakf48gwEJKgJvKpc8yT1XkzjA68dvo5hJTR/7j1TCEgsC/PITXLFG9hr1Gi1kT/pL8lTdWZf1Pzd510Stjc6666a8UUUH8dXVmFMCHABAXvfZ2uyqyATGW48icilYSRAtX9hLB+TIm+ALo=
+     procedure_id : 1680992471063658736
+     type_code : 15
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] grDestinationChamp (<sNomGraphe>, <sNomChamp>)
+      //
+      // Paramètres :
+      //	sNomGraphe : Nom du graphe
+      //	sNomChamp : Le nom du champ préfixé du nom de la fenêtre dans lequel le graphe doit être dessiné
+      // Valeur de retour :
+      // 	booléen :    Vrai si la fonction a réussi, faux dans le cas contraire
+      
+      Procédure grDestinationChamp(sNomGraphe, sNomChamp)
+      
+      
+      nIndice est un entier					// Indice du graphe dans le tableau
+      
+      // Recherche du nom du graphe
+      nIndice = RechercheGraphe(sNomGraphe)
+      si nIndice = -1 ALORS
+      	renvoyer Faux
+      FIN
+      
+      // Vérification de l'existence du champ image
+      si ChampExiste(sNomChamp) ALORS
+      
+      	// Vérification du pointeur
+      	si gtabListeGraphe[nIndice]:pclGraphe = null ALORS
+      		gsErreur = <§@41b859715e99ef780004§>
+      		renvoyer faux
+      	FIN
+      	
+      	// Mémorisation du champ associé au graphe trouvé
+      	gtabListeGraphe[nIndice]:pclGraphe:ChampImage(majuscule(sNomChamp))
+      	
+      
+      sinon
+      	
+      	gsErreur = chaineconstruit(<§@41b859715e99ef780005§>,sNomChamp)
+      	
+      	renvoyer faux
+      FIN
+      
+      renvoyer vrai
+     type : 458752
+   -
+     name : RechercheGraphe
+     procedure_id : 1680992471063724272
+     type_code : 15
+     code : |1-
+      // Cette méthode peut être appelée soit par une autre méthode
+      // pour rechercher un graphe à partir de son nom
+      // Soit par l'événement branché sur le champ image
+      // Syntaxe :
+      //[ <Résultat> = ] RechercheGraphe (<sNomGraphe> [, <sNomChamp>])
+      //
+      // Paramètres :
+      //	sNomGraphe : Le nom du graphe à rechercher
+      //	sNomChamp (valeur par défaut="") : Le nom du champ à rechercher
+      // Valeur de retour :
+      // 	entier :  Indice du graphe trouvé ou -1 si le graphe est introuvable
+      
+      Procédure privée RechercheGraphe(sNomGraphe, sNomChamp = "")
+      
+      nIndice est un entier				// Indice de parcours
+      bTrouve est un booléen = faux		// Vrai si le graphe a été trouvé, faux sinon (Par défaut, on ne trouve pas le graphe)
+      
+      // Vérification du nom du champ
+      si sNomChamp <> "" ALORS
+      	// Le nom du champ est vide
+        	
+        	// On parcoure le tableau des graphes
+        	pour nIndice = 1 _a_ dimension(gtabListeGraphe)
+      		
+      		// Vérification de l'objet Graphe
+      		Si gtabListeGraphe[nIndice]:pclGraphe <> null ALORS
+      			
+      			// On Compare les noms des champs (égalité stricte car géré => Tout en majuscule) 
+      			si sNomChamp = gtabListeGraphe[nIndice]:pclGraphe:ChampImage() ALORS
+      				// On a trouvé le graphe correspondant
+      				// on met la variable à vrai
+      				bTrouve = vrai
+      				// on sort de la boucle
+      				sortir			
+      			FIN
+      		
+      		FIN	
+      	FIN
+      	// Si on n'a pas trouvé, on renvoie -1
+      	si pas bTrouve ALORS
+      	
+      		nIndice = -1
+      	
+      	FIN
+      sinon
+      	// Le nom du champ n'est pas renseigné, on recherche par rapport au nom du graphe	
+      	
+      	// Recherche du nom du graphe dans le tableau
+      	nIndice = tableaucherche(gtabListeGraphe,tcLinéaire,"sNomGraphe",sNomGraphe)
+      	
+      	si nIndice = -1 ALORS
+      		gsErreur = <§@41b859715e99ef780006§>
+      	FIN
+      	
+      FIN
+      
+      // Renvoie l'indice du tableau
+      renvoyer nIndice
+     type : 458752
+   -
+     name : grDessine
+     internal_properties : CAAAAAgAAAAnYh8SDD6lfoODJqA62oEh9g5t5o02KgnDuLSV6uFZiZGT3Up76vzR/WRkHmZoSKvfXMKfP3O5S4lvK66ddhPf3EOnIxolauq3vAbGgBDkA8NJ8kDIKFFnQ+Wkqzdlo5NOJkll5aATuu31LZzLwFhNnkxhvhebvCJXGi+RMwWkKFb4GOzvafkXDd81s+r8PxAglmECk7JLPHJoW5TXjxpT0etVCLcVAeOn3/xSIBKLP9pB/fYM1MzxT/B/dEiWy4pJY5VLWKAXcgboTe2VtjQzqO7hD7Tjn6Vb5topyPavVezkv2oHBWauupDBb+31K51WBCNK0Mh6m3xHYpL4w7oh6Dp5rCMTTguGOSsBplUImi9w0LNdoSFDdswBtJJKpvJj
+     procedure_id : 1680992471063789808
+     type_code : 15
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] grDessine (<sNomGraphe>)
+      //
+      // Paramètres :
+      //	sNomGraphe : le nom du graphe à dessiner
+      // Valeur de retour :
+      // 	booléen : Vrai si la fonction a réussi, faux dans le cas contraire
+      
+      Procédure grDessine(sNomGraphe)
+      
+      // Recherche du graphe
+      nIndice est un entier
+      
+      
+      nIndice = RechercheGraphe(sNomGraphe)
+      si nIndice = -1 alors
+      	renvoyer Faux
+      FIN
+      
+      // Vérification de l'objet
+      si gtabListeGraphe[nIndice]:pclGraphe <> null ALORS
+      
+      	// Dessine le graphe correspondant
+      	// Appel de la méthode de dessin
+      	gtabListeGraphe[nIndice]:pclGraphe:Dessine()
+      	
+      FIN
+      
+      Renvoyer vrai
+     type : 458752
+   -
+     name : grTitre
+     internal_properties : CAAAAAgAAABm21m9ReGBXvrnNMzxy5hqpP91rO7Lhq5UpxNv1kY136QtcGzaVXlrv0cVvPcZ8lsi5P9tMpWg453fde+1PEjjhqetyc3X0vud7GxXK+cmw75GVqysYclGmN5sAUHQpHIia0WBDoxvVg327kBMqcopEeh+mKSsH0+M/eQdQ43tnJA3unCcJs2QzsM/5ImY+g/uIPtYFeJLATnsJ7liX4K3Jjeel77bpKdUfiUYnTy8YPrVaplfb5IiubcwFr3hJTSHYmfsfD0ewtNiVuvc74pl2Ezbs3PdZfoTYh8d3vi5CW5xae68xgIBCynCVmVyXZiIV44Rd6ATbkF9ff5U2Z6ZU2Rz9buNzyql9LqsCClLcwbcFPv2SSBxNt0OWN3K
+     procedure_id : 1680992471063855344
+     type_code : 15
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] grTitre (<sNomGraphe>, <sTitre>, <nPosition>)
+      //
+      // Paramètres :
+      //	sNomGraphe : Le nom du graphe concerné
+      //	sTitre : Titre du graphe
+      //	nPosition : Position du titre (grEnHaut,grEnBas,grSans)
+      // Valeur de retour :
+      // 	booléen : Vrai si la fonction a réussi, faux dans le cas contraire
+      
+      Procédure grTitre(sNomGraphe,sTitre,nPosition)
+      
+      
+      //--------------------------------------
+      //	VERIFICATION DES PARAMETRES
+      //--------------------------------------
+      
+      // Recherche du graphe dans le tableau
+      nIndice est un entier
+      
+      nIndice = RechercheGraphe(sNomGraphe)
+      si nIndice = -1 ALORS
+      	renvoyer faux
+      FIN
+      
+      
+      si sTitre ~= "" et nPosition <> grsans ALORS
+      	gsErreur = <§@41b859715e99ef780007§>
+      	renvoyer faux
+      FIN
+      
+      
+      // Selon la position
+      // On accepte seulement les bonnes positions
+      // Pour toutes les autres, on renvoie faux
+      SELON nPosition
+      	
+      	cas grsans,grenhaut,grenbas
+      		// Le paramètre est bon, on continue
+      		
+      	autres cas 
+      		gsErreur = <§@41b859715e99ef780008§>
+      		renvoyer faux
+      FIN
+      
+      // Vérification de l'objet
+      si gtabListeGraphe[nIndice]:pclGraphe <> NULL alors
+      
+      	// Affectation du titre par la méthode SetTitre
+      	gtabListeGraphe[nIndice]:pclGraphe:SetTitre(sTitre,nPosition)
+      
+      fin
+      
+      Renvoyer vrai
+     type : 458752
+   -
+     name : grPoliceTitre
+     internal_properties : CAAAAAgAAABMjXeZS19Ib/GU7z6ckzlfhYK3UypJSpKF0+Awz+ZILtEx70ultuftEIMGlrZ+S0sqt3FZ0pg2lAVJ15vBgpnOBFjZqwRU+/DtNkgcgn0jl35MB8feB0CsyEYn2eLhMZiAEttBoe3QTLQl8ukxcHpfq8oTBuejlqoLBeZZO6yYwZEvqJWQC4zinmJZnf3K4cnbl96QszlrvkaZrISnO6j+s4wIa/L2uIJX4V/EsnRAP8cTLkMPsdE4uV+InmNh801Q0VrZ++kidosXMd0XLCvjSk+lutqy3g3FLWZ5pGeElej0p63TdZ5EZzrdDHtNYie+hVddI8uI41eT3FRmT5QV1j8MS3fZtPbx+QuRdILnO0UmPJW3VwcFNywfpOHUlzS+hqD1u0mVtA==
+     procedure_id : 1680992471063920880
+     type_code : 15
+     code : |1+
+      // Syntaxe :
+      //[ <Résultat> = ] grPoliceTitre (<sNomGraphe>, <sNomPolice>, <nTaille>[, <nCouleur>])
+      //
+      // Paramètres :
+      //	sNomGraphe : Nom du Graphe concerné
+      //	sNomPolice : Nom de la police à utiliser pour le titre
+      //	nTaille : Taille de la police
+      //	nCouleur : Couleur du texte
+      // Valeur de retour :
+      // 	booléen :  Vrai si la fonction a réussi, faux dans le cas contraire
+      
+      Procédure grPoliceTitre(sNomGraphe,sNomPolice,nTaille,nCouleur=noir)
+      
+      // Recherche du graphe
+      nIndice est un entier
+      
+      nIndice = RechercheGraphe(sNomGraphe)
+      si nIndice = -1 alors
+      	renvoyer faux
+      FIN
+      
+      // Vérification de l'objet
+      si gtabListeGraphe[nIndice]:pclGraphe <> NULL alors
+       	
+       	// On met à jour la police du titre
+      	gtabListeGraphe[nIndice]:pclGraphe:PoliceTitre(sNomPolice,nTaille,nCouleur)
+      
+      fin
+      
+      renvoyer vrai
+     type : 458752
+   -
+     name : grLegende
+     internal_properties : CAAAAAgAAADJlGHMfsBPRL1x8EIsFFMZB/wHmQqkMqaPdK/Us8/PQRxv/cu7pFBz5YYGqN1qOpWlbtjvdPKjIRuRXdDFuekjeBBvdMbbFQmmmIjoa2XMljwZ7/bGvMWHNuaJt58J//O453A/C/BLSiHLeg5ZyjUnP+ojTIMkOmhkhDlTbghPoDu2Je1vV4KzS0fS3D090XRBQHsnvUORfm50Fidyw8H+nR/2+oDcqnyzyehJOetecIaBCnWD88iP+Y7FlgQ4gjy1070jjES66pM/bmLyDww5VYSjvvKPtU9srmuK2UxJPA+BTOhDvVKORkDxqgdNb23qPHtW2zW16uFSdQn3g5pFz1/m5XukEk+qCljCirajdy/WMul7ww8xYOYrQmCc1JyN
+     procedure_id : 1680992471063986416
+     type_code : 15
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] grLegende (<sNomGraphe>, <nPosition>)
+      //
+      // Paramètres :
+      //	sNomGraphe : Nom du graphe concerné
+      //	nPosition : Position de la légende (grEnHaut, grEnBas, grSans)
+      // Valeur de retour :
+      // 	booléen : Vrai si la fonction a réussi, faux dans le cas contraire
+      
+      Procédure grLegende(sNomGraphe,nPosition)
+      
+      
+      nIndice est un entier
+      
+      // Recherche du graphe
+      
+      nIndice = RechercheGraphe(sNomGraphe)
+      si nIndice = -1 ALORS
+      	renvoyer faux
+      FIN
+      
+      
+      // Vérification de la position
+      // On n'accepte que les positions valides
+      // Dans tous les autres cas, on renvoie faux
+      selon nPosition
+      	cas grAGauche, grADroite, grsans
+      		// On ne fait rien, la position est bonne
+      	autre cas 
+      		
+      		gsErreur = <§@41b859715e99ef780009§>
+      		renvoyer faux
+      	
+      FIN
+      
+      // Vérification de l'objet
+      si gtabListeGraphe[nIndice]:pclGraphe <> NULL ALORS
+      
+      	// On positionne la légende
+      	gtabListeGraphe[nIndice]:pclGraphe:Legende(nPosition)
+      	
+      FIN
+      
+      
+      renvoyer vrai
+     type : 458752
+   -
+     name : grEtiquetteCatégorie
+     internal_properties : CAAAAAgAAAAJlnTLtXkVQeA9UXOtPwCgt/KjSYyiCvCsbViBmcK48kN6ljzae7T5gRCK2j7h0x+I4CukzZr4UdcW8aMHSwty89r78nXwDcULXZlC1nMKyBut+FUITJZ1pBf2V04+JC6oscq2y1YeJsGaSX0Ppdx3KnY6UtVOzCOG9OaDzCj3D2HmiRYoUpefrCGBL5PdTUOQY+Lm4vdw4ZpbkK5wBM8DaKw0cu0z57BspcS0mcHcQ6qKD586aXJNy7q62PO4mRxPWjn7U2j2eiT7f0190uEc0K2cLsXgSzWQIXZa1uy46PjwJgP4GVz6sS6ng3d/9gD44+bprKBOctlYj4hHJRrx3ruebSIhLG5+tffKcynMx8Oz3GllxJxXGAHE84uUafRIbHghBNiYZT5l0Gjmb6bnDg8QCvxQP95Cv6tbs8igpRF4nEsW/8JpHrcE46vXuAxtNrZ+4cTtYYMWmCcOwHTWhb60O4GOA8R8QqozrzDc2Tw59IFFbLtPW+75lVDy8JajwvrlJpxFKwB6sV/Uew0A+AWeZoMKCHmZ4ng7HlHGl8mQvVp6OaO8/U3AUiq1bv0=
+     procedure_id : 1680992471064117488
+     type_code : 15
+     code : |1+
+      // Syntaxe :
+      //[ <Résultat> = ] grEtiquetteCatégorie (<sNomGraphe>, <nIndiceSérie>, <sChaine>)
+      //
+      // Paramètres :
+      //	sNomGraphe : Nom du graphe concerné
+      //	nIndiceSérie : Indice de la série concernée (Courbe et nuage), ou de l'indice concerné (Histogramme)
+      //	sChaine : La chaine que l'on doit afficher
+      // Valeur de retour :
+      // 	booléen :  Vrai si la fonction a réussi, faux dans le cas contraire
+      
+      Procédure grEtiquetteCatégorie(sNomGraphe, nIndiceSérie, sChaine)
+      
+      
+      
+      nIndice est un entier
+      
+      // Recherche du graphe
+      
+      nIndice = RechercheGraphe(sNomGraphe)
+      si nIndice = -1 ALORS
+      	renvoyer faux
+      FIN
+      
+      // Vérification de l'objet
+      si gtabListeGraphe[nIndice]:pclGraphe <> null alors
+      
+      	// On ajoute la légende grâce à la méthode AjouteLégende
+      	gtabListeGraphe[nIndice]:pclGraphe:AjouteLégende(nIndiceSérie,sChaine)
+      
+      fin
+      
+      renvoyer vrai
+     type : 458752
+   -
+     name : grNuageReliePoint
+     internal_properties : CAAAAAgAAAAAd+Xhh47KBRxWbqqI9P0WFWeN1BRGmUvajb+ILTe3ptMDlD7RQOg0hWQ4VMLrkEtplbEiahyr0OmQw83GdynDLpcXvZY5LH1Di13CgrNWVLSZQapNZ8wRSrJ2alcU1OroHw2PPpApfgqddnyNh2Z8XXvus6t80TLFwzSmYZWBWFcQt/DHEpdV6RqC2cEt8iY1eBXC278Yh1HEh4F2TbxdcMHAXZoBrnn6RbEHTJ2ZC0nNsqTO/fq2vBqLf3ZusD2uQdP/xXv1nC4/o34Uv4BsTkzf8zyYI41VQrWALc0CUIbKlcs1/CGbE8Q2q6v2KGLJhHvJoX7E0ffqPTbBju4AObLaf+8/Dtf+YtGLYBMYyE7h2PPqp0VAHTVgV0QIhhv5eJCH8WQe/qYdhMR7LA==
+     procedure_id : 1680992471064183024
+     type_code : 15
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] grNuageReliePoint (<sNomGraphe>, <bRelie>)
+      //
+      // Paramètres :
+      //	sNomGraphe : Nom du graphe concerné
+      //	bRelie : Les points doivent-ils être reliés
+      // Valeur de retour :
+      // 	booléen : Vrai si la fonction a réussi, faux dans le cas contraire
+      
+      Procédure grNuageReliePoint(sNomGraphe,bRelie)
+      
+      
+      // Recherche du graphe
+      nIndice est un entier
+      
+      
+      nIndice = RechercheGraphe(sNomGraphe)
+      si nIndice = -1 alors
+      	renvoyer Faux
+      FIN
+      
+      // Vérification de l'objet
+      si gtabListeGraphe[nIndice]:pclGraphe <> null alors
+      	
+      	// Affecte la valeur de l'option ReliePoint
+      	gtabListeGraphe[nIndice]:pclGraphe:ReliePoint(bRelie)	
+      FIN
+      
+      
+      renvoyer vrai
+     type : 458752
+   -
+     name : grNuageTaillePoint
+     internal_properties : CAAAAAgAAACgG13kBJ1PMr8gSLkbjLiBucak7vmCTcAUTyqH3gwNaxRFqkGUb2Pu5WVpRMrhOAUbpq8JdljVZtp0xiEJMWxemoH4P6L5fi4yYpHgEfJbdbf59wzEY0UuwFAALYk58e/CHOMfuGg+Or6BiawxbRfz5cYGfwU9SHpgXNTAxqZDhk2QUzzUKA5yB78jKyLA2nAyk5BhYrqhbc3N5xodNlTTMJB3C3kL88fO9gvCserhhf/oBIUgRIQ7e6Q+LVLM35g5mxU0wYDtrx+/GmKCka1Bt0yflkCvZeTcUqxSDYtzsSfeIYwlU4c2trSPfTd+u+SqJN+K3IwLP6XTvZGHEOJXF9gQS+4zWebQfSKgtCE2XjOQnFVpAmCDEJGvFpreJYpJRRGVnQVoWFq3ebLT6uG1pA==
+     procedure_id : 1680992471064248560
+     type_code : 15
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] grNuageTaillePoint (<sNomGraphe>, <nTaillePoint>)
+      //
+      // Paramètres :
+      //	sNomGraphe : Nom du graphe concerné
+      //	nTaillePoint : Rayon du point que l'on doit afficher
+      // Valeur de retour :
+      // 	booléen :  Vrai si la fonction a réussi, faux dans le cas contraire
+      
+      Procédure grNuageTaillePoint(sNomGraphe,nTaillePoint)
+      
+      
+      
+      // Recherche du graphe
+      nIndice est un entier
+      
+      
+      nIndice = RechercheGraphe(sNomGraphe)
+      si nIndice = -1 alors
+      	renvoyer Faux
+      FIN
+      
+      // Vérification de l'objet
+      si gtabListeGraphe[nIndice]:pclGraphe <> null alors
+      
+      	// Affectation de la taille du point
+      	gtabListeGraphe[nIndice]:pclGraphe:TaillePoint(nTaillePoint)
+      	
+      fin
+      
+      renvoyer vrai
+     type : 458752
+   -
+     name : grCouleurSérie
+     internal_properties : CAAAAAgAAABHAUpp/NdXAS2F2qH2E4PweFc/8aVHPathMhBh+dCAuh2jn+SjOSzyDVpGwkFII/8lu+TMHyAdCs4qrbSA6/U3VnycdbFvlnO2gjHg7/TKj4k+HyXIq3mZ4j6W6rmxyez0eqbmoF2DTF1RzCEQWjLforFkw1qdp2/F+6rwyz0+bwC/n76M4YwufaQnYqTnEiC854gpWB4nWeX0IN+nudYn2TAk1lcxYqGwZ86iOO5iaT4n2ATrIaODg6Aul1ljiaDdBl9Rzj/ph8uCKJfDn/C3prONIjilEq0cEn0E8VDJhXYTcyLySveKDbry6/JHdnzG2xiVbMdCP+NiMiP8kLyNDU3QhXEqrcIUuFBh0f+oRJQfGp9q9fZMtTMNG03AdOGxNoGd4+0ckAO6mwA=
+     procedure_id : 1680992471064314096
+     type_code : 15
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] grCouleurSérie (<sNomGraphe>, <nSérie>, <nCouleur>)
+      //
+      // Permet de modifier la couleur d'une série
+      
+      // Paramètres :
+      //	sNomGraphe : Le Nom du graphe concerné
+      //	nSérie : Le numéro de la série à modifier
+      //	nCouleur : La couleur que l'on veut afficher
+      // Valeur de retour :
+      // 	booléen :  Vrai si la fonction a réussi faux dans le cas contraire.
+      
+      Procédure grCouleurSérie(sNomGraphe,nSérie,nCouleur)
+      
+      // Recherche du graphe
+      nIndice est un entier
+      
+      
+      nIndice = RechercheGraphe(sNomGraphe)
+      si nIndice = -1 alors
+      	renvoyer Faux
+      FIN
+      
+      // Vérification de l'objet
+      si gtabListeGraphe[nIndice]:pclGraphe <> null alors
+      	
+      	// Affecte la couleur à la série
+      	gtabListeGraphe[nIndice]:pclGraphe:CouleurSérie(nSérie,nCouleur)
+      
+      fin
+      
+      renvoyer vrai
+     type : 458752
+   -
+     name : grIncrémenteDonnée
+     internal_properties : CAAAAAgAAAAWoyoosZQ0Ztly5VvqRkfJwce2RxFu22AJZiQILrX4W9SW1AijtDhF7ZXWG1tICWcgr83gfIDK9X6YZv4aWR7i29KPjUjyhTdgz85dcDmdJRfsXtx7PjHSCl+SE3CsX8RrRguvP55g8psrAqZTfb3wDq9wKhLOuYcLLzFb0ZITVMFwLwaEWW6O1TkOpi63RGV3OKh/MOyWHebwRpoqAc39+ut1g6ndmDh2vgcFg9gWnWSp86BVvwbB4IvmZAzmO5srCSoABZ7MIH9wxqrCkjhbxqv8KjBz2v3Mx0QNdZk/XMmOnb6PfUe3HmtEC+hKBkRQ/x1UKJJpNM5iyOjJf+tPNiCfZK1jeuQPP2b+1QYeB4Gl3J1rkYy3dAYd8tfDUSCQKeNPopDaTvVVpGE5DZtG+a60q/aOfxEzanzfAVNzH4aBapdhlrOcoZTmC6du/NiUj4IdIAB8Zn3aC7xy9ous5QMoiv2kQYnXB23R2+Shov2QRlQ9PzJ7LvMS0eqQNRZpDWoqHH1CW7RsK1scVEDdf+h4hyViHoQ9ApDwAAvfSJHox4jDsvC70/HkyXJHk+moL6b9EcyPaZRpVAeTgzdFqT2v3psN/49OTHUqwch4f2ZFjgL7y/jLR9UMswCCavAvk3VXvnGzS/++X3sRrMYRVJsXcjebWbxAjc1zhEXgsA5JyTOnaOgAJsgptmXLboAdjKZrL20BGCTOKZVFq6jtCXb7zA==
+     procedure_id : 1680992471064379632
+     type_code : 15
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] grIncrémenteDonnée (<sNomGraphe>, <nIndice>[, <nValeur>[, <nSérie>]])
+      //
+      // Paramètres :
+      //	sNomGraphe : sNomGraphe
+      //	nIndice : L'indice que l'on doit modifier
+      //	nValeur : La valeur à ajouter
+      //	nSérie : Le numéro de la série (par défaut = 1)
+      // Valeur de retour :
+      // 	booléen :   Vrai si la fonction a réussi, faux dans le cas contraire
+      
+      Procédure grIncrémenteDonnée(sNomGraphe, nIndice, nValeur = 1, nSérie = 1)
+      
+      nIndice = RechercheGraphe(sNomGraphe)
+      si nIndice = -1 ALORS
+      	renvoyer faux
+      FIN
+      
+      // Vérification de l'objet
+      si gtabListeGraphe[nIndice]:pclGraphe <> Null ALORS
+      
+      	// On incrémente la donnée
+      	gtabListeGraphe[nIndice]:pclGraphe:IncrémenteDonnée(nValeur,nIndice,nSérie)
+      
+      fin
+      
+      renvoyer vrai
+     type : 458752
+   -
+     name : grSupprimeTout
+     internal_properties : CAAAAAgAAACuKhAsS32yFHe6VEwWWlGqi7NssLaP7ELzFxXPVS193PVkTIFwafplZ2mtCMPCu6E6pCkZt4dc+Kl2LZ5ornjm2+Lsm2QBKnghDsIL3nHnfi1ZTO7w7D4xKb5URbaQ4Mn7lqq0fpVWHXh/HTi8Eo8Vlq+eyFSUMs0c3ejevuWyIi+0YQbxzh3nWEwmHLlneEXGFMj8TXLUX3Kkz4miKlDWw71HTr2B+qahhpvYcNOh1D/EaKneuKtM2m0t9XxLyUV/7xnXwN5QhgIvtiRg6LdxMWdiWMG1pB8Gqy39ho4ZCLYDi+R5gZf2PVKNSdF29XAGBoNsio0Tezh1oRN/BynQvfqCzaBN5lc/xBHnwhaqgo5lKNqDIZKXoxnXGDQ888z1MmtPvNot
+     procedure_id : 1680992471064445168
+     type_code : 15
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] grSupprimeTout (<sNomGraphe>)
+      //
+      // Paramètres :
+      //	sNomGraphe : Nom du graphe à supprimer
+      // Valeur de retour :
+      // 	booléen :  Vrai si la fonction a réussi
+      
+      Procédure grSupprimeTout(sNomGraphe)
+      
+      
+      nIndice est un entier
+      // Recherche du graphe dans le tableau
+      nIndice = RechercheGraphe(sNomGraphe)
+      
+      si nIndice = -1 ALORS
+      	renvoyer vrai
+      sinon
+      	
+      	// Vérification de l'objet
+      	si gtabListeGraphe[nIndice]:pclGraphe <> null alors
+      		// L'objet n'est pas null, on libère		
+      		
+      		// Efface le champ Image
+      		dfindessin(gtabListeGraphe[nIndice]:pclGraphe:ChampImage())
+      		
+      		// Libère l'objet CGraphe
+      		liberer gtabListeGraphe[nIndice]:pclGraphe
+      		
+      		// Supprime l'élément du tableau
+      		tableausupprime(gtabListeGraphe,nIndice)	
+      	
+      	fin
+      	
+      FIN
+      
+       renvoyer vrai
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : PocketGrapheur
+resources :
+ string_res :
+  identifier : 0x41b859715e99ef78
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+  strings :
+   -
+     text :
+      fr-FR : Le nom du graphe est invalide
+     index : 0
+   -
+     text :
+      fr-FR : Le type de graphe est invalide
+     index : 1
+   -
+     text :
+      fr-FR : "Seulement les courbes, les histogrammes sont disponibles"
+     index : 2
+   -
+     text :
+      fr-FR : Un graphe avec le même nom existe déjà
+     index : 3
+   -
+     text :
+      fr-FR : Le graphe n'existe plus
+     index : 4
+   -
+     text :
+      fr-FR : Le champ %1 n'existe pas
+     index : 5
+   -
+     text :
+      fr-FR : "Impossible de trouver ce graphe, vérifier que la fonction grCrée a bien été appelée avant"
+     index : 6
+   -
+     text :
+      fr-FR : Le titre est invalide
+     index : 7
+   -
+     text :
+      fr-FR : La position du titre est invalide
+     index : 8
+   -
+     text :
+      fr-FR : La position de la légende est invalide
+     index : 9
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

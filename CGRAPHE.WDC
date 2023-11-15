@@ -1,0 +1,740 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : cGraphe
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x11b88338002a2238
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  type_code : 10
+  p_codes :
+   -
+     internal_properties : CAAAAAgAAAC5+6znH4xtBlHaN3ikr+7/ecsOPBZ357NhGLM++FVJEQteQKANqt1R0pnvJjQKA7xJ/LikJkoF2aGwG0xh/4vnTqbHKno3ZykLRTXjz9ntNXQud77TSll4+5vog+AIqFMSDtJYd734HNLkBV4=
+     code : |1+
+      constant
+      	
+      	// Constantes contenant le type de graphe
+      	CN_HISTO = 1
+      	CN_COURBE = 2
+      	CN_NUAGE = 5
+      	
+      	
+      	// Marges Horizontale et verticale
+      	MARGE_AXE_X = 20
+      	MARGE_AXE_Y = 10
+      	
+      FIN
+      
+      
+      Serie est une structure
+      	
+      	ptabDonnées est un tableau dynamique		// Le tableau qui va contenir les valeurs du graphe pour une série
+      	
+      FIN
+      
+      
+      
+      
+      cGraphe est une classe
+      	
+      	
+      PROTEGE
+      	
+      	m_nTypeGraphe est un entier								// Type de graphe (Histogramme, Courbe ou nuage de points)
+      	m_sNomChampImage est une chaine							// Le nom du champ image dans lequel dessiner
+      	
+      	m_tabSérie est un tableau dynamique de 0 série			// Le tableau contenant les séries (Un tableau par série)
+      	
+      	m_tabLégende est un tableau dynamique de 0 chaines		// Le tableau contenant la légende de chaque série (courbe ou nuage) ou de chaque catégorie
+      	m_tabCouleur est un tableau dynamique de 0 entier			// Le tableau contenant les couleurs de chaque série
+      	
+      	
+      	// Membres concernant le Titre du graphe
+      	
+      	m_sTitre est une chaine = ""								// Titre du graphe
+      	m_nPositionTitre est un entier = grsans					// Position du graphe
+      	
+      	m_sPoliceTitre est une chaine = "Arial"					// Police du graphe
+      	m_nTailleTitre est un entier = 12						// Taille du graphe
+      	m_nCouleurTitre est un entier = noir					// Couleur du graphe
+      	
+      	
+      	// Membres concernant la légende du graphe
+      	
+      	m_nPositionLegende est un entier = grsans				// Position de la légende
+      	
+      	m_nAbscisseLégende est un entier = -1					// Abscisse du point d'origine de la légende (haut gauche)
+      	m_nOrdonnéeLégende est un entier = -1					// Ordonnée du point d'origine de la légende (haut gauche)	
+      	
+      Fin
+      
+     type : 131072
+  procedures :
+   -
+     name : Constructeur
+     procedure_id : 1276914770903769656
+     type_code : 27
+     code : |1-
+      // Syntaxe :
+      //CGraphe ([<nTypeGraphe>])
+      //
+      // Paramètres :
+      //	nTypeGraphe : Type de graphe à construire
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure Constructeur(nTypeGraphe = ::CN_COURBE)
+      
+      :m_nTypeGraphe = nTypeGraphe
+      
+      :CouleurSérie(1,VertPastel)
+      :CouleurSérie(2,RougePastel)
+      :CouleurSérie(3,Bleupastel)
+      :CouleurSérie(4,MagentaPastel)
+      :CouleurSérie(5,CyanPastel)
+      :CouleurSérie(6,JaunePastel)
+     type : 589824
+   -
+     name : Destructeur
+     internal_properties : CAAAAAgAAABX7NNwpf4fpJN2VZx8URbd0HnSUxb8z1KOl1gOg9hOcYXSs+Fsd81DWRQi7JvKiSJri16yeIZ5OS4YsGA56yruYumWSKwxRYvKj+B5n8X+fhBrOKTLVgd63MWLV0DMXwJG1ekCRPzu3o21
+     procedure_id : 1276914770903835192
+     type_code : 28
+     code : |1+
+      // Syntaxe :
+      //Classe1 ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      Procédure Destructeur()
+      
+     type : 655360
+   -
+     name : ChampImage
+     procedure_id : 1276914770903900728
+     type_code : 12
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] ChampImage ( [<sNomDuChamp> est chaîne])
+      //
+      // Paramètres :
+      //	sNomDuChamp (chaîne ANSI - valeur par défaut="") : Nom du champ image dans lequel il faut dessiner
+      
+      Procédure ChampImage(sNomDuChamp est une chaine = "")
+      
+      // Vérification du champ image
+      si ChampExiste(sNomDuChamp) ALORS
+      	
+      	:m_sNomChampImage = sNomDuChamp
+      	
+      FIN
+      
+      RENVOYER :m_sNomChampImage
+     type : 458752
+   -
+     name : AjouteDonnées
+     procedure_id : 1276914770903966264
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //AjouteDonnées (<nValeur> [, <nIndice> [, <nSérie>]])
+      //
+      // Paramètres :
+      //	nValeur : Valeur à ajouter
+      //	nIndice (valeur par défaut=-1) : Indice auquel il faut ajouter
+      //	nSérie (valeur par défaut=1) : La série à laquelle on doit ajouter la valeur
+      
+      Procédure AjouteDonnées(nValeur, nIndice = -1, nSérie = 1)
+      
+      // La série existe
+      si nSérie <= dimension(:m_tabSérie) ALORS
+      
+      	// Vérification de l'indice
+      	si nIndice < dimension(:m_tabSérie[nSérie]:ptabDonnées) et nIndice <> -1 ALORS
+      		
+      		// L'indice existe déjà
+      		:m_tabSérie[nSérie]:ptabDonnées[nIndice] = nValeur
+      		
+      	sinon
+      		// On ajoute la donnée au tableau
+      		tableauajoute(:m_tabSérie[nSérie]:ptabDonnées,nValeur)
+      		Tableauajoute(:m_tabLégende,"")
+      		
+      	FIN	
+      	
+      sinon
+      	// Ajout de la série et de la donnée
+      	MaSérie est un Série
+      	
+      	TableauAjoute(:m_tabSérie,MaSérie)
+      		
+      	:m_tabSérie[nSérie]:ptabDonnées = allouer un tableau dynamique de 0 reels
+      		
+      	// On ajoute la donnée au tableau
+      	tableauajoute(:m_tabSérie[nSérie]:ptabDonnées,nValeur)
+      	Tableauajoute(:m_tabLégende,"")	
+      		
+      FIN
+      
+     type : 458752
+   -
+     name : Dessine
+     procedure_id : 1276914770904031800
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //Dessine ()
+      //
+      // Dessine le graphe
+      
+      Procédure virtuelle Dessine()
+      
+      
+      
+      
+     type : 458752
+   -
+     name : GetValeurMax
+     procedure_id : 1276914770904097336
+     type_code : 12
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] GetValeurMax (<nSérie>)
+      //
+      // Paramètres :
+      //	nSérie : Numéro de la série pour laquelle il faut calculer la valeur maximum
+      // Valeur de retour :
+      // 	entier :  La valeur maximum
+      
+      Procédure GetValeurMax(nSérie)
+      
+      nValeurMax est un entier
+      
+      i est un entier
+      
+      // Parcours du tableau des données pour trouver la valeur maximum possible
+      pour i = 1 _a_ dimension(:m_tabSérie[nSérie]:ptabDonnées)
+      	
+      	nValeurMax = max(nValeurMax,:m_tabSérie[nSérie]:ptabDonnées[i])
+      	
+      FIN
+      
+      renvoyer nValeurMax
+     type : 458752
+   -
+     name : GetValeurMin
+     procedure_id : 1276914770904228408
+     type_code : 12
+     code : |1-
+      // Syntaxe :
+      //[ <Résultat> = ] GetValeurMin (<nSérie>)
+      //
+      // Paramètres :
+      //	nSérie : Numéro de la série pour laquelle il faut trouver la valeur minimum
+      // Valeur de retour :
+      // 	entier :      Valeur minimum de la série
+      
+      Procédure GetValeurMin(nSérie)
+      
+      nValeurMin est un entier
+      
+      i est un entier
+      // Parcours du tableau des données pour trouver la valeur minimum des données
+      pour i = 1 _a_ dimension(:m_tabSérie[nSérie]:ptabDonnées)
+      	
+      	nValeurMin = Min(nValeurMin,:m_tabSérie[nSérie]:ptabDonnées[i])
+      	
+      FIN
+      
+      renvoyer nValeurMin
+     type : 458752
+   -
+     name : DonneCouleur
+     internal_properties : CAAAAAgAAABaB/QxIxuER7P1K9W/SGwcjnLP/i+7/V3k9LHDxx5yM7QiZWN3xCMSrGHDRRzxwMYfDyFOJ1EUq1rWWML4em6QWBS0+0eKwnq0X8xr4dSTHkZYImN2MXrQMmkXufHYcbXYSuJV6HonzV4AeMR7cNuLGmTqwRCtW8Tt2s8IbBNog0xxTjUkw4ivnQIJPA3yD2kc5ncOWfxNMTMaoM79ii7vJC+ZYLgaNIawEdY+BiIuUAvOMd7rurv82tIaDJMKaR6V+3hqIT9llBP92B6deFnYcRbNilMM6ak6HvyjzhhIhN0pcctC/ZhGEKFqFUoCAAC2BuK9Eiisf6Y7OEXgq9E8hUIBdpXooXekShhUFDKE7YXKvrY4jpQ1ZefklbMpQQ8e
+     procedure_id : 1276914770904359480
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //[ <Résultat> = ] DonneCouleur ([<nIndiceCouleur>])
+      //
+      // Paramètres :
+      //	nIndiceCouleur : Indice de la couleur à renvoyer
+      // Valeur de retour :
+      // 	entier :  	Couleur sélectionnée
+      
+      Procédure DonneCouleur(nIndiceCouleur = -1)
+      
+      
+      si nIndiceCouleur > 6 ALORS
+      
+      	Tableauajoute(:m_tabCouleur,rvb(hasard(1,255),hasard(1,255),hasard(1,255)))
+      	renvoyer :m_tabCouleur[dimension(:m_tabCouleur)]
+      	
+      sinon
+      	
+      	Renvoyer :m_tabCouleur[nIndiceCouleur]
+      	
+      FIN
+     type : 458752
+   -
+     name : SetTitre
+     procedure_id : 1277158561836823190
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //SetTitre (<sTitre>, <nPosition>)
+      //
+      // Paramètres :
+      // 	sTitre : Titre du graphe
+      // 	nPosition : Position du titre (grEnHaut, grEnBas,grSans)
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure SetTitre(sTitre, nPosition)
+      
+      :m_sTitre = sTitre
+      :m_nPositionTitre = nPosition
+      
+     type : 458752
+   -
+     name : PoliceTitre
+     procedure_id : 1277168947068459388
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //PoliceTitre (<sNomPolice>, <nTaille>[, <nCouleur>])
+      //
+      // Paramètres :
+      //	sNomPolice : Nom de la police à utiliser pour le titre
+      //	nTaille : Taille de la police
+      //	nCouleur : Couleur de la police
+      
+      Procédure PoliceTitre(sNomPolice,nTaille,nCouleur=noir)
+      
+      :m_sPoliceTitre = sNomPolice
+      :m_nCouleurTitre = nCouleur
+      :m_nTailleTitre = nTaille
+     type : 458752
+   -
+     name : Legende
+     procedure_id : 1277174612130461821
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //Légende (<nPosition>)
+      //
+      // Paramètres :
+      //	nPosition : Position de la légende (grEnHaut, grEnBas, grSans)
+      
+      Procédure Legende(nPosition)
+      
+      :m_nPositionLegende = nPosition
+     type : 458752
+   -
+     name : ClicGraphe
+     procedure_id : 1277181174840576410
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //ClicGraphe ()
+      //
+      // Cette méthode permet de redessiner la légende
+      
+      Procédure virtuelle ClicGraphe()
+      
+     type : 458752
+   -
+     name : AjouteLégende
+     procedure_id : 1277184653764241389
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //[ <Résultat> = ] AjouteLégende (<nIndice>, <sChaine>)
+      //
+      // Paramètres :
+      //	nIndice : Indice (Histogramme) ou série (Courbe et nuage de points) de la légende
+      //	sChaine : Libellé de la légende
+      
+      Procédure AjouteLégende(nIndice,sChaine)
+      
+      // Vérification de l'indice
+      si nIndice > dimension(:m_tabLégende) ALORS
+      	renvoyer faux	
+      FIN
+      
+      :m_tabLégende[nIndice] = sChaine
+      
+      renvoyer vrai
+     type : 458752
+   -
+     name : CouleurSérie
+     procedure_id : 1277301223477408908
+     type_code : 12
+     code : |1-
+      // Syntaxe :
+      //CouleurSérie (<nSérie>, <nCouleur>)
+      //
+      // Paramètres :
+      //	nSérie : Numéro de la série
+      //	nCouleur : Couleur à affecter
+      
+      Procédure CouleurSérie(nSérie, nCouleur)
+      
+      
+      si nSérie <= dimension(:m_tabCouleur) ALORS
+      	
+      	:m_tabCouleur[nSérie] = nCouleur
+      	
+      sinon
+      	
+      	tableauajoute(:m_tabCouleur,nCouleur)
+      	
+      FIN
+     type : 458752
+   -
+     name : DonneCouleurRelief
+     procedure_id : 1277308834159460464
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //[ <Résultat> = ] DonneCouleurRelief (<nCouleur>)
+      //
+      // Paramètres :
+      //	nCouleur : Couleur à partir de laquelle il faut trouver une couleur de relief
+      // Valeur de retour :
+      // 	entier : Couleur de relief
+      
+      Procédure DonneCouleurRelief(nCouleur)
+      
+      nRouge, nVert, nBleu est un entier
+      
+      // Récupération des composantes Verte, Rouge et Bleue (Voir fonction RVB)
+      nRouge = modulo(nCouleur,256)
+      nVert = modulo(nCouleur/256,256)
+      nBleu = modulo(nCouleur/(256*256),256)
+      
+      nRouge = min(255,nRouge*0.7)
+      nBleu = Min(255,nBleu*0.7)
+      nVert = Min(255,nVert*0.7)
+      
+      renvoyer rvb(nRouge,nVert,nBleu)
+      
+     type : 458752
+   -
+     name : IncrémenteDonnée
+     internal_properties : CAAAAAgAAAByVII4ds7haDbPHKS8nKYj9Kh9PIdNoaxJDJ7jSwVwbIg5Pa52tSufN0kjvDnGtLZ1HBS5NzDhuwp0y54Z/IwOY3GVbbBZRP3FWlRAopFpD/EjeiphKKx4q5xpTrVcEY9c7laMiFHEQJW8aWFUjirmLsHmSdaHF22D7GGmzWpPP0em9U3hNJlDfT6SCoQ1+MBnK+rjUw==
+     procedure_id : 1278291836209207999
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //[ <Résultat> = ] IncrémenteDonnée (<nValeur>, <nIndice>, <nSérie>)
+      //
+      // Paramètres :
+      //	nValeur : Valeur que l'on doit ajouter
+      //	nIndice : L'indice auquel on doit ajouter la valeur
+      //	nSérie : La série à laquelle cette valeur doit être ajoutée
+      
+      Procédure IncrémenteDonnée(nValeur,nIndice,nSérie)
+      
+      
+      si nSérie > dimension(:m_tabSérie) alors renvoyer Faux
+      
+      
+      Si nIndice > dimension(:m_tabSérie[nSérie]:ptabDonnées) ALORS renvoyer faux
+      	
+      // Incrémentation de la valeur
+      :m_tabSérie[nSérie]:ptabDonnées[nIndice] += nValeur
+      
+      renvoyer vrai
+      
+      
+     type : 458752
+   -
+     name : CalculMarges
+     procedure_id : 1278748210849354531
+     type_code : 12
+     code : |1-
+      // Syntaxe :
+      //CalculMarges (<MargeTitreBas>, <MargeTitreHaut>, <MargeLégendeGauche>, <MargeLégendeDroite>)
+      //
+      // Paramètres :
+      //	MargeTitreBas : marge du bas pour le titre
+      //	MargeTitreHaut :  marge du haut pour le titre
+      // 	MargeLégendeGauche : <indiquez ici le rôle de MargeLégendeGauche>
+      // 	MargeLégendeDroite : <indiquez ici le rôle de MargeLégendeDroite>
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure CalculMarges(MargeTitreBas,MargeTitreHaut, MargeLégendeGauche, MargeLégendeDroite)
+      
+      si :m_sTitre ~= "" ALORS
+      	
+      	MargeTitreBas = 0
+      	
+      sinon
+      	selon :m_nPositionTitre
+      	
+      		cas grenbas
+      			
+      			MargeTitreBas = 15		// On laisse 15 Pixels Verticaux pour le titre (en bas)
+      			MargeTitreHaut = 0				
+      			
+      		cas grEnHaut
+      			
+      			MargeTitreHaut = 20		// On laisse 20 Pixels Verticaux pour le titre (en haut)
+      			MargeTitreBas = 0			
+      			
+      		autres cas
+      		
+      			
+      	FIN
+      
+      FIN
+      
+      
+      selon :m_nPositionLegende
+      
+      	cas grAGauche
+      		
+      		MargeLégendeGauche = 100		// On laisse 22 Pixels horizontaux pour la légende (à gauche)
+      		MargeLégendeDroite = 0		
+      		
+      	cas grADroite
+      		
+      		MargeLégendeGauche = 0		// On laisse 22 Pixels horizontaux pour la légende (à droite)
+      		MargeLégendeDroite = 100		
+      		
+      	autres cas
+      		
+      FIN
+     type : 458752
+   -
+     name : TraceAxe
+     internal_properties : CAAAAAgAAADCGzFbcKATpx8TPkr+vXVvdaEKKhyhnSRx3XG5/Hu51C1qHdRqfrfD2o9QpNKEsd2nmJPPTeZQhZ9/h5LZEv+kxw461+YmRuI9NCEfg/27sitNZzZwxdvo4f85uExdcvRv3EH6bU5r5BNd/1GBVcmXjX0VxVXOPBOX85PwpqNYw5eNu2gLNgM+jpRzg+Y4UA2m5QULaK+IWB12BGpaeweIvY2B
+     procedure_id : 1278748859389502050
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //TraceAxe (<MargeTitreHaut>, <MargeLégendeGauche>, <Deby> [, <MargeTitreBas> [, <MargeLégendeDroite>]])
+      //
+      // Paramètres :
+      //	MargeTitreHaut :  marge du haut pour le titre
+      //	MargeLégendeGauche : <indiquez ici le rôle de MargeLégendeGauche>
+      //	Deby : <indiquez ici le rôle de Deby>
+      //	MargeTitreBas (valeur par défaut=0) :  marge du bas pour le titre
+      //	MargeLégendeDroite (valeur par défaut=0) : < indiquez ici le rôle de MargeLégendeGauche >
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure TraceAxe(MargeTitreHaut, MargeLégendeGauche, Deby, MargeTitreBas=0, MargeLégendeDroite = 0)
+      
+      
+      // Trace les Axes
+      // Axe vertical
+      dLigne(::MARGE_AXE_X + MargeLégendeGauche,::MARGE_AXE_Y+MargeTitreHaut,::MARGE_AXE_X+ MargeLégendeGauche,{:m_sNomChampImage,indchamp}..Hauteur - ::MARGE_AXE_Y - MargeTitreBas,noir)
+      
+      // Trace une flèche en haut de l'axe vertical
+      dPolygone(3,::MARGE_AXE_x+ MargeLégendeGauche,::MARGE_AXE_Y+MargeTitreHaut,::MARGE_AXE_x + MargeLégendeGauche- 3,::MARGE_AXE_Y+MargeTitreHaut+3,::MARGE_AXE_x + MargeLégendeGauche+3,::MARGE_AXE_Y+MargeTitreHaut+3,noir,noir)
+      
+      // Axe Horizontal
+      dligne(::MARGE_AXE_X+MargeLégendeGauche,Deby,{:m_sNomChampImage,indChamp}..Largeur -::MARGE_AXE_x-MargeLégendeDroite,Deby,noir)
+      
+      // Trace la flèche de l'axe horizontal
+      dpolygone(3,...
+      {:m_sNomChampImage,indChamp}..Largeur -::MARGE_AXE_x - MargeLégendeDroite,	// Abscisse du point d'arrivée de l'axe horizontal
+      Deby,													// Ordonnée du point d'arrivée de l'axe horizontal
+      {:m_sNomChampImage,indChamp}..Largeur -::MARGE_AXE_x-3 - MargeLégendeDroite,	
+      Deby-3,
+      {:m_sNomChampImage,indChamp}..Largeur -::MARGE_AXE_x-3 - MargeLégendeDroite,
+      Deby+3,noir,noir)
+     type : 458752
+   -
+     name : TraceGraduation
+     internal_properties : CAAAAAgAAACHlPO0aTLKx5Em/IDCEtWW5JIWr6/MtA+1R4L1BZiLr/SNHBwyWFJOp8tZ1xX4XPvxTYXxsESL5xA869pZHHl0V8yhfxdiGE15Py/QekSuefdcPGpyn6UL6H/bBmfFSSAqVdd2fjLiOU4T+12k0/iVuixD78B0TU4kF6GM472j61IES+bqqu107x6bohnbZAo+AxoIoq6MnuK3eheanMBft/n8ubG2wyM1C7u8jHFVbTLdal0=
+     procedure_id : 1278749744152773981
+     type_code : 12
+     code : |1-
+      // Syntaxe :
+      //TraceGraduation (<nValeurMin>, <nValeurMax>, <nFacteur>, <MargeTitreBas>, <MargeLégendeGauche>)
+      //
+      // Paramètres :
+      //	nValeurMin : Valeur min du graphe
+      //	nValeurMax : Valeurmax du graphe
+      //	nFacteur : <indiquez ici le rôle de nFacteur>
+      //	MargeTitreBas : marge du bas pour le titre
+      // 	MargeLégendeGauche : <indiquez ici le rôle de MargeLégendeGauche>
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure TraceGraduation(nValeurMin,nValeurMax,nFacteur,MargeTitreBas, MargeLégendeGauche)
+      
+      
+      // Gestion des graduations
+      // Ecris la première graduation (Valeur min)
+      
+      nEcartGraduation est un entier
+      i est un entier
+      nValeur est un entier
+      nPixelsEntreGraduation est un entier
+      
+      // Création de la police des graduations
+      dpolice("Arial",8,iNormal)
+      
+      // Calcul de l'écart en valeur entre chaque graduation
+      nEcartGraduation = ( nValeurMax + abs(nValeurMin) ) / 5 
+      // Calcul du nombre de pixels entre chaque graduation
+      nPixelsEntreGraduation = nEcartGraduation * nFacteur
+      
+      // Tracé des graduations
+      nValeur = nValeurMin
+      
+      nY est un entier = {:m_sNomChampImage,indchamp}..Hauteur - ::MARGE_AXE_Y - MargeTitreBas - 12
+      
+      dtexte(MargeLégendeGauche,nY,nValeur,noir)
+      nY -= nPixelsEntreGraduation
+      
+      pour i = 1 a 5
+      	nValeur += nEcartGraduation
+      	dtexte(MargeLégendeGauche,nY ,nValeur ,noir)
+      	nY -= nPixelsEntreGraduation
+      FIN
+     type : 458752
+   -
+     name : DessineTitre
+     procedure_id : 1278750547315646671
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //DessineTitre ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure DessineTitre()
+      
+      // Définition de la police du titre
+      dpolice(:m_sPoliceTitre,:m_nTailleTitre,igras)
+      
+      // Tracé du titre
+      selon :m_nPositionTitre
+      
+      	cas grsans
+      		
+      		// On ne fait rien
+      		
+      	cas grenbas
+      		
+      		dTexte(({:m_sNomChampImage,indchamp}..largeur - 2 * ::MARGE_AXE_X - taille(:m_stitre) * 4 )/2,{:m_sNomChampImage,indchamp}..Hauteur - ::MARGE_AXE_Y -10,:m_sTitre,:m_nCouleurTitre)
+      		
+      	cas grenhaut
+      		
+      		dTexte(({:m_sNomChampImage,indchamp}..largeur - 2 * ::MARGE_AXE_X - taille(:m_stitre) * 4 )/2,2,:m_sTitre,:m_nCouleurTitre)
+      		
+      FIN
+     type : 458752
+   -
+     name : DessineLégende
+     internal_properties : CAAAAAgAAAD1Rw85zpqoHkenUx7JvJ2k/dKEjiv44hNoYiifo+h0Fnc7+QfElVCA9lxGQ12R4QEiN4pV1aTTp2SUgdUxp1WqdcwmiM5w5fxg64j0UyQBXetKI0gmvSuJOLoAESX0xcGik57ZjBFoo87yGES8NOgwfLiKFITrX5R8gD7jSbJr7gxQ8Gv+mWt2e8GEuZ3c2BF8VAs12iegdhjmi0xgv9gHhCiua5b6mIKqT4cuqaaL5zXKZg==
+     procedure_id : 1278750908092983019
+     type_code : 12
+     code : |1-
+      // Syntaxe :
+      //DessineLégende (<MargeTitreHaut>, <MargeTitreBas>, <MargeLégendeGauche>, <MargeLégendeDroite>, <nSérie>, <nNbreSérie>)
+      //
+      // Paramètres :
+      //	MargeTitreHaut : marge du haut pour le titre
+      //	MargeTitreBas : <indiquez ici le rôle de MargeTitreBas>
+      //	MargeLégendeGauche : <indiquez ici le rôle de mar>
+      //	MargeLégendeDroite : <indiquez ici le rôle de MargeLégendeDroite>
+      //	nSérie : <indiquez ici le rôle de nSérie>
+      //	nNbreSérie : <indiquez ici le rôle de nNbreSérie>
+      // Valeur de retour :
+      // 	Aucune
+      
+      
+      Procédure DessineLégende(MargeTitreHaut,MargeTitreBas, MargeLégendeGauche,MargeLégendeDroite, nSérie, nNbreSérie)
+      
+      selon :m_nPositionlegende
+      
+      	cas grAGauche		
+      		
+      		// Sauvegarde des coordonnées du point d'origine de la légende
+      		:m_nAbscisseLégende = 1
+      		:m_nOrdonnéeLégende = MargeTitreHaut 
+      	
+      		dRectangle(:m_nAbscisseLégende,:m_nOrdonnéeLégende,:m_nAbscisseLégende+MargeLégendeGauche-20,min(:m_nOrdonnéeLégende+nNbreSérie*15 +3, {:m_sNomChampImage,indChamp}..hauteur- MargeTitreBas),Transparent,Noir)	
+      		
+      		// Dessine le rectangle de couleur
+      		drectangle(:m_nAbscisseLégende + 3,:m_nOrdonnéeLégende+(nSérie-1)*15+2,:m_nAbscisseLégende + 15,:m_nOrdonnéeLégende+nSérie*15,:donnecouleur(nSérie),Blanc)
+      		
+      		dPolice("Arial",7)
+      		dtexte(:m_nAbscisseLégende + 25,:m_nOrdonnéeLégende +(nSérie-1)*15+2,:m_tabLégende[nSérie],noir)		
+      		
+      	cas grADroite
+      		
+      		// Sauvegarde des coordonnées du point d'origine de la légende
+      		:m_nAbscisseLégende = {:m_sNomChampImage,indChamp}..Largeur - MargeLégendeDroite + 20 - 5
+      		:m_nOrdonnéeLégende = MargeTitreHaut 
+      	
+      		dRectangle(:m_nAbscisseLégende,:m_nOrdonnéeLégende, :m_nAbscisseLégende + MargeLégendeDroite -20 ,Min(:m_nOrdonnéeLégende+nNbreSérie*15 +3, {:m_sNomChampImage,indChamp}..Hauteur- MargeTitreBas),Transparent,Noir)	
+      	
+      		// Dessine le rectangle de couleur
+      		drectangle(:m_nAbscisseLégende + 3,:m_nOrdonnéeLégende+(nSérie-1)*15+2,:m_nAbscisseLégende + 15,:m_nOrdonnéeLégende+nSérie*15,:DonneCouleur(nSérie),blanc)
+      		
+      		dpolice("Arial",7)
+      		dtexte(:m_nAbscisseLégende + 25,:m_nOrdonnéeLégende + (nSérie-1)*15+2,:m_tabLégende[nSérie],noir)
+      		
+      		
+      FIN
+     type : 458752
+   -
+     name : ReliePoint
+     procedure_id : 1339142241365902066
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //ReliePoint (<bRelié>)
+      //
+      // Paramètres :
+      // 	bRelié : <indiquez ici le rôle de bRelié>
+      // Valeur de retour :
+      // 	Aucune
+      
+      
+      Procédure virtuelle ReliePoint(bRelié <utile>)
+     type : 458752
+   -
+     name : TaillePoint
+     procedure_id : 1339202654375993684
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //TaillePoint (<nTaillePoint>)
+      //
+      // Paramètres :
+      // 	nTaillePoint : <indiquez ici le rôle de nTaillePoint>
+      // Valeur de retour :
+      // 	Aucune
+      
+      
+      Procédure Virtuelle TaillePoint(nTaillePoint <utile>)
+      
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+resources :
+ string_res :
+  identifier : 0x1fbf67240019f1ae
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

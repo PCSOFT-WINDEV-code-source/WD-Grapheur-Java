@@ -1,0 +1,256 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : cHistogramme
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x11befec3005d7ab0
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      cHistogramme est une classe
+      hérite de CGraphe
+      
+      	m_nLargeurBarre est un entier = 0				
+      
+      Fin
+      
+     type : 131072
+  procedures :
+   -
+     name : Constructeur
+     procedure_id : 1278739457698069183
+     type_code : 27
+     code : |1+
+      // Syntaxe :
+      
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      Procédure Constructeur()
+      
+     type : 589824
+   -
+     name : Destructeur
+     procedure_id : 1278739457698134719
+     type_code : 28
+     code : |1+
+      // Syntaxe :
+      
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      Procédure Destructeur()
+      
+     type : 655360
+   -
+     name : ClicGraphe
+     internal_properties : CAAAAAgAAADa7CpnJf6G/ohjJFaqjDZTQjgPUBH7gQoLKD6FYT24LFL1A25IVy/hWa135k/W9PaTfNo5lUZxTXyoY4zjAOiqGdnXGe4zwPefDqunM6YKnEx8a20OXVe3KiskPb45cgzLXye7eUKzmzC3cODNSzcX8QKnFBtEyqA+Z3S9/gdo7OI7ArxypQgybC2RjQFu3AT6Y5JL+w==
+     procedure_id : 1278745840026658265
+     type_code : 12
+     code : |1+
+      // Syntaxe :
+      //ClicGraphe ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      
+      Procédure Virtuelle ClicGraphe()
+      
+      
+      nX, nY sont des entiers
+      nIndiceBarre est un entier
+      
+      
+      // Démarre le dessin sur le champ image
+      // Au cas ou un autre graphe ait été créé le DC en cours ne serait plus bon, il faut donc repositionner le dessin sur le bon champ
+      ddebutdessin(:m_sNomChampImage,dSansEffacer)
+      
+      // Récupération des coordonnées de la souris (du stylet)
+      nX = sourisposx() 
+      nY = SourisPosY()
+      
+      si :m_nPositionLegende = grsans alors retour
+      
+      
+      // Récupération de la barre sur laquelle on a cliqué
+      nIndiceBarre = nX / :m_nLargeurBarre
+      
+      si nIndiceBarre > Dimension(:m_tabLégende) ALORS
+      	nIndiceBarre = Dimension(:m_tabLégende)
+      FIN
+      
+      si nIndiceBarre < 1 ALORS
+      	nIndiceBarre = 1
+      FIN
+      
+      // Dessine le rectangle de couleur
+      dfond(Blanc)
+      
+      drectangle(:m_nAbscisseLégende,:m_nOrdonnéeLégende,{:m_sNomChampImage,indChamp}..Largeur -::MARGE_AXE_Y,:m_nOrdonnéeLégende + 20,Blanc,noir)
+      
+      drectangle(:m_nAbscisseLégende + 3,:m_nOrdonnéeLégende+3,:m_nAbscisseLégende + 18,:m_nOrdonnéeLégende+18,:m_tabCouleur[nIndiceBarre],Blanc)
+      
+      
+      // Dessine le texte
+      
+      dpolice("Arial",10,iGras)
+      
+      dtexte(:m_nAbscisseLégende + 25,:m_nOrdonnéeLégende + 3,:m_tabLégende[nIndiceBarre],noir)
+     type : 458752
+   -
+     name : Dessine
+     procedure_id : 1217469825123010295
+     type_code : 12
+     code : |1+
+      // Résumé : Dessine l'histogramme
+      // Syntaxe :
+      //Dessine ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      
+      PROCEDURE VIRTUELLE Dessine()
+      
+      // Paramètre de l'histogramme
+      nDebX,nDebY				sont des entiers	// Point origine Bas Gauche
+      nLargeur				est un entier		// Largeur de chaque barre
+      nRelief					est un entier		// Valeur du relief 3D
+      rFacteur				est un réel			// Facteur d'échelle de hauteur
+      nNbBarre				est un entier		// Nombre de barres
+      nCouleur				est un entier		// Couleur de la barre 
+      nBarre					est un entier		// Numéro de la barre à éditer
+      nX,nY					sont des entiers	// variables de travail
+      nMargeTitreBas 			est un entier		// La marge que l'on doit laisser en bas
+      nMargeTitreHaut 		est un entier		// La marge que l'on doit laisser en haut
+      nMargeLégendeGauche 	est un entier		// La marge que l'on doit laisser en bas
+      nMargeLégendeDroite 	est un entier		// La marge que l'on doit laisser en haut
+      
+      nRelief = 5									// Le relief fait 5 points
+      
+      
+      // Vérification de l'existence du champ
+      SI ChampExiste(:m_sNomChampImage) = Faux ALORS
+      	RETOUR
+      FIN
+      
+      // Récupération de la valeur max
+      nValeurMax est un entier = :GetValeurMax(1)
+      nValeurMin est un entier = :GetValeurMin(1)
+      
+      
+      // Calcul des marges (Attention les variables sont passées par adresse et modifiées dans la procédure)
+      :CalculMarges(nMargeTitreBas, nMargeTitreHaut, nMargeLégendeGauche, nMargeLégendeDroite)
+      
+      // ---------------------------------------------
+      // 		Description de l'histogramme
+      // ---------------------------------------------
+      
+      // Calcul du facteur (Nombre de pixel pour chaque unité de valeur
+      // Nombre de pixel destiné au graphe (Hauteur du champ - Total des marges (2*::MARGE_AXE_Y - (MargeTitreBas+MargeTitreHaut))
+      // divisé par (L'écart des valeurs)
+      rFacteur= ({:m_sNomChampImage,indChamp}..Hauteur -2*::MARGE_AXE_Y - (nMargeTitreBas+nMargeTitreHaut)) / (nValeurMax - nValeurMin)
+      
+      
+      // Position de début de dessin
+      nDebX = ::MARGE_AXE_X + 1 + nMargeLégendeGauche		// Abscisse
+      
+      // Position de l'histogramme : Hauteur du champ - Marges du bas
+      SI nValeurMin < 0 ALORS
+      	nDebY = {:m_sNomChampImage,indChamp}..Hauteur - ::MARGE_AXE_Y - nMargeTitreBas + (nValeurMin * rFacteur)		// Position de l'origine de l'histogrammegrammegrammegramme	
+      SINON
+      	nDebY = {:m_sNomChampImage,indChamp}..Hauteur - ::MARGE_AXE_Y - nMargeTitreBas		// Position de l'origine de l'histogrammegrammegrammegramme
+      FIN
+      
+      // Nombre de barres
+      nNbBarre=Dimension(:m_tabSérie[1]:ptabDonnées)							
+      // Largeur de chaque barre
+      nLargeur=({:m_sNomChampImage,indChamp}..Largeur -2*::MARGE_AXE_X - nMargeLégendeDroite - nMargeLégendeGauche) / nNbBarre					// Chaque barre fait 34 de large
+      
+      
+      // Sauvegarde de la largeur d'une barre
+      :m_nLargeurBarre = nLargeur
+      
+      // -----------------------------------------------------
+      // Démarre le dessin
+      // -----------------------------------------------------
+      
+      dDébutDessin(:m_sNomChampImage)
+      
+      
+      // Trace les Axes
+      :TraceAxe(nMargeTitreHaut, nMargeLégendeGauche,nDebY,nMargeTitreBas, nMargeLégendeDroite)
+      
+      // Dessine le titre
+      :DessineTitre()
+      
+      // Dessine les graduations
+      :TraceGraduation(nValeurMin,nValeurMax,rFacteur,nMargeTitreBas, nMargeLégendeGauche)
+      
+      
+      // Tracé des histogrammes
+      
+      nX=nDebX				// position de départ à gauche
+      
+      POUR nBarre = 1 A nNbBarre
+      	
+      	// Dessine la légende
+      	:DessineLégende(nMargeTitreHaut, nMargeTitreBas, nMargeLégendeGauche, nMargeLégendeDroite, nBarre, nNbBarre)
+      	nCouleur = :DonneCouleur(nBarre)
+      	
+      	dFond(nCouleur)
+      	dStylo(RVB(100,100,100))
+      	
+      	// Calcule la hauteur de l'histogramme
+      	nY = nDebY-(:m_tabSérie[1]:ptabDonnées[nBarre]*rFacteur)
+      	
+      	// Trace le rectangle de base  
+      	dPolygone(4, nX,nDebY, nX,nY, nX+nLargeur,nY, nX+nLargeur,nDebY)
+      	
+      	// Les autres faces sont plus foncées: on change la couleur
+      	nCouleur = :DonneCouleurRelief(nCouleur)
+      	
+      	dFond(nCouleur)
+      	// Trace le côté
+      	dPolygone(4, nX+nLargeur,nY, nX+nLargeur+nRelief,nY-nRelief,nX+nLargeur+nRelief,nDebY-nRelief, nX+nLargeur,nDebY)
+      	
+      	// On trace le dessus de la barre seulement si la valeur est positive
+      	SI :m_tabSérie[1]:ptabDonnées[nBarre] > 0 ALORS
+      		
+      		// Trace le dessus
+      		dPolygone(4, nX,nY, nX+nRelief,nY-nRelief, nX+nLargeur+nRelief,nY-nRelief, nX+nLargeur,nY)
+      		
+      	SINON
+      		
+      		dPolygone(4,nX,nDebY,nX+nRelief,nDebY - nRelief,nX+nLargeur+nRelief,nDebY-nRelief,nX+nLargeur,nDebY)
+      		
+      	FIN	
+      	nX = nX + nLargeur
+      FIN
+      
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+resources :
+ string_res :
+  identifier : 0x1fbf67240038f1cd
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

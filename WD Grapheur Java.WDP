@@ -1,0 +1,99 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : WD Grapheur Java
+ major_version : 28
+ minor_version : 0
+ type : 4097
+ description : ""
+ subtype : 0
+project :
+ identifier : 0x0
+ internal_properties : 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
+ configurations :
+  -
+    name : WD Grapheur Java
+    internal_properties : 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
+    configuration_id : 17269987259369537561
+    type : 8
+    version : {}
+    language : 1
+    new_features_help :
+     name : ""
+     internal_properties : CAAAAAgAAACjf8AKsdKT9zePpnEhy1MQ63F6x5y3Zzo9g3sBTtSDfQPaDyZPh27+WyjDNVJZJTFHe0VQKHpc7jakoA==
+ elements :
+  identifier : 0x4ac3800601d0cc2d
+  elements :
+   -
+     name : cGraphe
+     identifier : 0x4754159600035f83
+     internal_properties : CAAAAAgAAAAfe3crmMVtfsjDl7BKM8dOnYyE3Axw4Vx2oaXCnWIo6CjoXJUG8hPRqZAK9r4yzsIKCg==
+     physical_name : .\CGRAPHE.WDC
+     type : 4
+   -
+     name : cCourbe
+     identifier : 0x4754159500025da0
+     internal_properties : CAAAAAgAAAAdeXUplsNrdMLZqbZIMjFEF3BSwvjMKCGi5h5BYt25J4VbUaAI8BXTr5YA+Lgo0MAICA==
+     physical_name : .\cCourbe.wdc
+     type : 4
+   -
+     name : GrapheurJava
+     identifier : 0x47541597000563d7
+     internal_properties : CAAAAAgAAAC7l+MnhMFpcnx320S+iV9+oRwIqE7h4+/4KSJ3obBiTqoGhvuiHkeFHQT++ro2wjaepg==
+     physical_name : .\GrapheurJava.wdg
+     type : 7
+   -
+     name : cHistogramme
+     identifier : 0x4754159600046270
+     internal_properties : CAAAAAgAAADnY8/T0I2lRhBbP9giHs9+yfas/N46VrNSWvapZsnVM90HgYAuiqtpMejSLvbqlgrycg==
+     physical_name : .\cHistogramme.wdc
+     type : 4
+   -
+     name : FEN_Graphe
+     identifier : 0x47541b0e0000bcdf
+     internal_properties : CAAAAAgAAADeRDbq2YauQQkE1HGLaHY17J3rI78a1zBK5KW0Yv8d+wUtudjFM1KOatHLNf3zjwHLSw==
+     physical_name : .\FEN_Graphe.wdw
+     type : 2
+  other_elements :
+   -
+     physical_name : .\description.gif
+   -
+     physical_name : .\description.rtf
+  net_assemblies : []
+  uwp_api : []
+  external_components : []
+  internal_components : []
+ report_and_queries_enabled : false
+ common_generation_directory : true
+ languages :
+  - fr-FR
+ wd_style_sheet : ".\\WD Grapheur Java - Source.sty\r\n.\\WD Grapheur Java.sty"
+ wb_style_sheet : .\WD Grapheur Java - Source.wws
+ code_elements :
+  internal_properties : CAAAAAgAAACkjH1ytV/Adq7xBMrkgDmjSvjE7QY6nY7MtCOizUnYczH29q1gvvgyoS0wjWm7HYs4EF9ci7hJZCc45aM0ep/JFQ7yH4rILw==
+  type_code : 0
+  p_codes :
+   -
+     type : 196621
+   -
+     type : 196627
+     enabled : false
+  orphans :
+   -
+     name : WD Grapheur Java
+     identifier : 0x4ac3800701d8cd26
+     code_elements :
+      type_code : 159
+      p_codes : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+rad :
+ internal_properties : CAAAAAgAAABhIL0UXeZmxDJxY3Xy0Q==
+project_explorer :
+ explorer_type : project
+resources :
+ string_res :
+  identifier : 0x0
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAAAd98VSJfHHqE3P0QHwrwdhn7ig8dWBR6valpUTgnAMTVXiDg==
